@@ -2,7 +2,7 @@ package MST;
 
 import java.util.*;
 
-class Prims {
+class Kruskal {
 
     static class Edge {
         int source;
