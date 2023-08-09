@@ -1,124 +1,36 @@
-// User function Template for Java
-
-import java.util.PriorityQueue;
 import java.util.*;
 
-
-class Solution{
-    
-    static class Edge{
-    int source;
-    int dest;
-    int weight;
-    
-    Edge(int s,int d,int w){
-        this.source =s;
-        this.dest =d;
-        this.weight =w;
-    }
-}
-
-static class subset{
-    int parent;
-    int rank;
-    subset(int p, int r){
-        parent=p;
-        rank=r;
-    }
-}
-
-   // Function to unite two disjoint sets
-    private static void union(subset[] subsets, int x,
-                              int y)
-    {
-        int rootX = findroot(subsets, x);
-        int rootY = findroot(subsets, y);
- 
-        if (subsets[rootY].rank < subsets[rootX].rank) {
-            subsets[rootY].parent = rootX;
-        }
-        else if (subsets[rootX].rank
-                 < subsets[rootY].rank) {
-            subsets[rootX].parent = rootY;
-        }
-        else {
-            subsets[rootY].parent = rootX;
-            subsets[rootX].rank++;
-        }
-    }
-
-private static int findroot(subset sets[], int i){
-    if(sets[i].parent==i)
-    return i;
-    
-    return sets[i].parent = findroot(sets,sets[i].parent);
-}
-
-	static int spanningTree(int V, int E, int e[][]){
-	    
-	    List<Edge> edges = new ArrayList<Edge>();
-	    
-	    // add the edges to priority queue
-	    for(int i=0;i<e.length;i++){
-	        edges.add(new Edge(e[i][0],e[i][1],e[i][2]));
-	    }
-	    
-	    edges.sort(new Comparator<>(){
-	    @Override public int compare(Edge a,Edge b){
-	        return a.weight-b.weight;
-	    }
-	    });
-	    
-	    
-	    // Create a set 
-	    subset [] sets = new subset[V];
-	    
-	    //create a result vetor
-	    //in mst V-1 edges
-	    Edge [] result = new Edge[V];
-	    
-	    
-	     // Create V subsets with single elements
-        for(int i = 0; i < V; i++) {
-            sets[i] = new subset(i, 0);
-        }
+class Solution {
+    List<List<Integer>> ans=new ArrayList<>();
+    public List<List<Integer>> combine(int n, int k) {
         
-        //look carefully , j is the pq pointer lowest weight 
-                int j = 0;
-        //total edges pointer 
-        int totalEdges = 0;
-        
-        while(totalEdges<V-1){
-            
-            Edge curr = edges.get(j);
-            
-            int x = findroot(sets, curr.source);
-            int y = findroot(sets, curr.dest);
-            
-            if(x!=y){
-                result[totalEdges]=curr;
-                union(sets,x,y);
-                totalEdges++;
-                
-            }
-            j++;
-            
-        }
-        
-        int ans=0;
-        
-        for(int i=0;i<result.length;i++)
-        ans+=result[i].weight;
+        //track from n = 1 to n fwd fashion don't worry about duplicates
+        List<Integer> temp = new ArrayList<>();
+        shot(temp,n,1,k);
         return ans;
-	    
-	    
-	}
+    }
 
-	public static void main(String[] args) {
-		
-		int V = 3, E = 3;
-		int[][] e = {{0,1,5},{1,2,3},{0,2,1}};
-		
-		System.out.println(spanningTree(V,E,e));
-	}
+    public void shot(List<Integer> list,int n,int i,int k){
+
+        //base condition
+        if(i>n)
+            return;
+        //exclude
+        shot(list, n,i+1,k);
+        //include
+        list.add(i);
+        if(list.size()==k)
+            {
+                ans.add(list);
+                return;
+            }
+        shot(list, n, i+1, k);  
+        list.remove(list.size()-1);
+    }
+
+    public static void main(String[] args) {
+        Solution s = new Solution();
+        System.out.println(s.combine(4, 2));
+
+    }
 }
